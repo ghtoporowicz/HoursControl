@@ -12,6 +12,9 @@ import com.example.aluno.hourscontrol.R;
 import com.example.aluno.hourscontrol.dao.UserDao;
 import com.example.aluno.hourscontrol.model.User;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class RegisterActivity extends AppCompatActivity
 {
     EditText edtUsername, edtDailyhour, edtPassword, edtEmail, edtFullName;
@@ -51,8 +54,29 @@ public class RegisterActivity extends AppCompatActivity
         if (u.getFullname().equals("") || u.getUsername().equals("") || u.getPassword().equals("") || u.getDailyhour().equals("") || u.getEmail().equals("")) {
             Toast.makeText(this, "Preencha todos os campos corretamente.", Toast.LENGTH_SHORT).show();
         } else {
-            uDao.addUser(this, u);
-            finish();
+            if(emailValidate(u.getEmail())){
+                uDao.addUser(this, u);
+                finish();
+            }
+            else{
+                Toast.makeText(this, "Email inválido!", Toast.LENGTH_SHORT).show();
+            }
+
         }
+    }
+
+    // função de validar email via regular expression
+    public static boolean emailValidate(String email)
+    {
+        boolean isEmailIdValid = false;
+        if (email != null && email.length() > 0) {
+            String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+            Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(email);
+            if (matcher.matches()) {
+                isEmailIdValid = true;
+            }
+        }
+        return isEmailIdValid;
     }
 }
